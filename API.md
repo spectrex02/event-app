@@ -35,15 +35,19 @@ Content-Type: application/json;charset=utf-8
 }
 ```
 
-##  イベント選択
+##  イベント取得（全件）フィルター条件入れれるやつ
 ### Method
--   POST
+-   GET
 ### URL
--   /view
+-   /events?dateFron=xxx&dateEnd=xxxx
+
+##  イベント取得（１件）
+### Method
+-   GET
+### URL
+-   /event/${eventId}
 ### Request Parameter
-```json
-    {"id":  1}
-```
+- eventId: number(require)
 ### Response
 ```
 HTTP/1.1 200 OK
@@ -64,7 +68,7 @@ Content-Type:application/json;charset=utf-8
 ### Method
 -   POST
 ### URL
--   /event/update?id=event-id
+-   /event/${eventId}
 ### Request Parameter
 ```json
 {
@@ -94,17 +98,17 @@ Content-Type:application/json;charset=utf-8
 
 ##イベント削除
 ### Method
--   POST
+-   DELETE
 
 ### URL
--   /event/delete?id=event-id
+-   /event/${eventId}
 
 ### Request Parameter
 ```json
 {"id":  1}
 ```
 
-###Response
+### Response
 ```
 HTTP/1.1 200 OK
 ```
@@ -113,15 +117,14 @@ HTTP/1.1 200 OK
 ### Method
 -   POST
 ### URL
--   /event/vote
+-   /event/$eventId/vote
 ### Request Parameter
 ```json
 {
     "participantName":  "participant name",
-    "id":   1,
     "vote": [
-        {"date": "voting status"},
-        {"date": "voting status"}
+        {"date1": 1},
+        {"date2": 0}
     ]
 }
 ```
@@ -134,10 +137,9 @@ Content-Type:application/json;charset=utf-8
 ```json
 {
     "participantName":  "participant name",
-    "id":   1,
     "vote": [
-        {"date": "voting status"},
-        {"date": "voting status"}
+        {"date1": 1},
+        {"date2": 0}
     ]
 }
 ```
@@ -145,7 +147,7 @@ Content-Type:application/json;charset=utf-8
 ### Method
 -   GET
 ### URL
--   /event/view?id=event-id
+-   /event/$e{ventId}/results
 ### Request
 null
 ### Response
@@ -183,7 +185,7 @@ Content-Type:application/json;charset=utf-8
 |column name|type|key|
 |:---:|:---:|:---:|
 |id|int|primary key|
-|event-name|varchar(32)
+|event_name|varchar(32)
 |deadline|timestamp
 |comment|varchar(256)
 |planner|varchar(32)
@@ -193,7 +195,14 @@ Content-Type:application/json;charset=utf-8
 投票結果を格納するテーブル
 |column name|type|key|
 |:---:|:---:|:---:|
-|event id|id|key|
-|participant|varchar(32)|key|
-|voting date|date or timestamp|key|
-|voting status|int|
+|event_id|id|key|
+|participant_name|varchar(32)|key|
+|voting_date|timestamp|key|
+|voting_status|int|
+
+##  Table name: candidate_date
+イベントの候補日
+|column name|type|key|
+|:---:|:---:|:---:|
+|event_id|int|key|
+|date|timestamp|
