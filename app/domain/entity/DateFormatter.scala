@@ -1,4 +1,4 @@
-package entity
+package domain.entity
 
 import java.time.format.DateTimeFormatter
 
@@ -14,8 +14,7 @@ object DateFormatter {
   def generateId(): Int = {
     //乱数を生成してその値をイベントIDとする
     val r = new Random
-    val id = Math.abs(r.nextInt())
-    id
+    Math.abs(r.nextInt())
   }
   //
 

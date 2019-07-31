@@ -1,5 +1,5 @@
 
-package entity
+package domain.entity
 
 import java.time.LocalDateTime
 
@@ -9,7 +9,7 @@ case class Planner(name: String) {
   //メソッド定義
   def createEvent(eventName: String, candidateDates: Seq[LocalDateTime], deadline:  LocalDateTime, comment:  String):  Event = {
     //イベント作成
-    Event(eventName, candidateDates.map(date => date -> Seq.empty[Vote]).toMap, deadline, comment)
+    Event(-1, eventName, candidateDates.map(date => date -> Seq.empty[Vote]).toMap, deadline, comment)
   }
 
   def updateEvent(event: Event, newEventName: Option[String] = None,

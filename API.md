@@ -186,10 +186,18 @@ Content-Type:application/json;charset=utf-8
 |:---:|:---:|:---:|
 |id|int|primary key|
 |event_name|varchar(32)
+|candidate_dates|array[timestamp]
 |deadline|timestamp
 |comment|varchar(256)
 |planner|varchar(32)
 |status|bool
+
+##  Table name: candidate_date
+イベントの候補日
+|column name|type|key|
+|:---:|:---:|:---:|
+|event_id|int|key|
+|date|timestamp|
 
 ##  Table name: vote
 投票結果を格納するテーブル
@@ -200,9 +208,3 @@ Content-Type:application/json;charset=utf-8
 |voting_date|timestamp|key|
 |voting_status|int|
 
-##  Table name: candidate_date
-イベントの候補日
-|column name|type|key|
-|:---:|:---:|:---:|
-|event_id|int|key|
-|date|timestamp|

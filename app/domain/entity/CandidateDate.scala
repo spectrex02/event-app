@@ -1,5 +1,5 @@
 
-package entity
+package domain.entity
 
 
 //候補日のクラス

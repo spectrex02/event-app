@@ -1,5 +1,5 @@
 
-package entity
+package domain.entity
 
 import java.time.LocalDateTime
 
@@ -17,10 +17,6 @@ case class Participant(name: String) {
 
   def updateVoting(event: Event, date: LocalDateTime, votingStatus:  Int): Event = {
     //投票内容を変更する
-//    val newVoting: Seq[Vote] = event.candidateDates(date).collect{
-//      case v.name == name => Vote(name, Int2VotingValue(votingStatus))
-//    }
-
     val newVoting: Seq[Vote] = event.candidateDates(date).filter(vote => vote.name != name)
 
     event.copy (
