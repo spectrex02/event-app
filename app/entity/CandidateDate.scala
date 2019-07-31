@@ -1,7 +1,6 @@
 
-package services
+package entity
 
-import java.util.Date
 
 //候補日のクラス
 //候補日とそれに対応する参加者とその回答を保存する

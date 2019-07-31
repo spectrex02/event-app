@@ -148,7 +148,7 @@ Content-Type:application/json;charset=utf-8
 -   GET
 ### URL
 -   /event/$e{ventId}/results
-### Request
+### Request 
 null
 ### Response
 ```
