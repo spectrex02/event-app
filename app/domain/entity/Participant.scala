@@ -9,7 +9,7 @@ case class Participant(name: String) {
   //メソッド定義
   def createVoting(event: Event, date:  LocalDateTime, votingStatus: Int): Event = {
     //投票する
-    val newVoting: Seq[Vote] = event.candidateDates(date) :+ Vote(name, Int2VotingValue(votingStatus))
+    val newVoting: Seq[Vote] = event.candidateDates(date) :+ Vote(name, Util.Int2VotingValue(votingStatus))
     event.copy(
       candidateDates = event.candidateDates + (date -> newVoting)
     )
@@ -20,7 +20,7 @@ case class Participant(name: String) {
     val newVoting: Seq[Vote] = event.candidateDates(date).filter(vote => vote.name != name)
 
     event.copy (
-      candidateDates = (event.candidateDates - date) + (date -> (newVoting :+ Vote(name, Int2VotingValue(votingStatus))))
+      candidateDates = (event.candidateDates - date) + (date -> (newVoting :+ Vote(name, Util.Int2VotingValue(votingStatus))))
       )
   }
 
@@ -30,14 +30,5 @@ case class Participant(name: String) {
     event.copy(
       candidateDates = (event.candidateDates - date) + (date -> newVoting)
     )
-  }
-
-  def Int2VotingValue(votingStatus: Int): VotingValue = {
-    votingStatus match {
-    case 2 => VotingValue.Maru
-    case 0 => VotingValue.Batu
-    case 1 => VotingValue.Sankaku
-
-    }
   }
 }

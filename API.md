@@ -192,12 +192,6 @@ Content-Type:application/json;charset=utf-8
 |planner|varchar(32)
 |status|bool
 
-##  Table name: candidate_date
-イベントの候補日
-|column name|type|key|
-|:---:|:---:|:---:|
-|event_id|int|key|
-|date|timestamp|
 
 ##  Table name: vote
 投票結果を格納するテーブル
