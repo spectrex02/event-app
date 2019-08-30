@@ -19,13 +19,17 @@ sealed abstract class VotingValue(value:  Int) {
 }
 
 object VotingValue {
-  object Maru extends VotingValue(value = 2) {
-    val value: Int = 2
+  case object Maru extends VotingValue(value = 2) {
   }
-  object Batu extends VotingValue(value = 0) {
-    val value: Int = 0
+  case object Batu extends VotingValue(value = 0) {
   }
-  object Sankaku extends VotingValue(value = 1) {
-    val value: Int = 1
+  case object Sankaku extends VotingValue(value = 1) {
+  }
+
+  def apply(value: Int):VotingValue= value match {
+    case 2 => VotingValue.Maru
+    case 0 => VotingValue.Batu
+    case 1 => VotingValue.Sankaku
+    case _ => sys.error(s"Unknown value: $value")
   }
 }

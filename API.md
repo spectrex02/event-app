@@ -186,8 +186,8 @@ Content-Type:application/json;charset=utf-8
 |:---:|:---:|:---:|
 |id|int|primary key|
 |event_name|varchar(32)
-|candidate_dates|array[timestamp]
-|deadline|timestamp
+|candidate_dates|string(文字列のカンマ区切り)
+|deadline|varchar(32)
 |comment|varchar(256)
 |planner|varchar(32)
 |status|bool
