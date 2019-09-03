@@ -1,0 +1,68 @@
+{
+    "id": 1,
+    "eventName": "example_event",
+    "candidateDates":[
+    {
+        "date": "2019/08/30",
+        "votes": [
+                {
+                    "participant": "name1",
+                    "status": 1
+                },
+                {
+                    "participant": "name2",
+                    "status": 2
+                }
+            ]
+        },
+    {
+        "date": "2019/09/01",
+        "vote": [
+            {
+                "participant": "name1",
+                "status":1
+            },
+            {
+                "participant": "name2",
+                "status": 0
+            }
+            ]
+      }
+     ],
+    "deadline": "2019-08-29",
+    "comment": "example comment"
+  }
+
+{
+  "id":1,
+  "eventName":"test_event",
+  "candidateDates":[
+    [
+      "2019-08-30T19:00:00",[
+      {
+        "participant":"name1",
+        "status":1,
+      },
+      {
+        "participant":"name2",
+        "status":2,
+      }
+    ]
+    ],
+    [
+      "2019-09-01T19:00:00",
+      [
+        {
+          "participant":"name1",
+          "status":1,
+        },
+        {
+          "participant":"name2",
+          "status":0,
+        }
+      ]
+    ]
+  ],
+  "deadline":"2019-08-29T19:00:00",
+  "comment":"test_comment",
+}

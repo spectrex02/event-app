@@ -32,4 +32,12 @@ object VotingValue {
     case 1 => VotingValue.Sankaku
     case _ => sys.error(s"Unknown value: $value")
   }
+
+  def toInt(value: VotingValue): Int = value match {
+    case VotingValue.Maru => 2
+    case VotingValue.Batu => 0
+    case VotingValue.Sankaku => 1
+    case _ => sys.error(s"Unknown value: $value")
+
+  }
 }
