@@ -74,7 +74,7 @@ object EventReadWrites {
       (__ \ "status").write[VotingValue]
     )(unlift(Vote.unapply))
 
-  //ここはパス
+  //ここはパスあとで
   implicit val mapWrites: Writes[Map[LocalDateTime, Seq[Vote]]] = (map: Map[LocalDateTime, Seq[Vote]]) => {
 
   }
