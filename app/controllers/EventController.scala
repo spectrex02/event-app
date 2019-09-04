@@ -3,9 +3,8 @@ package controllers
 import java.time.LocalDateTime
 
 import domain.entity.{DateFormatter, Event, Vote, VotingValue}
-import play.api.libs.json._
 import play.api.libs.functional.syntax._
-import play.api.libs.json
+import play.api.libs.json._
 
 class EventController {
 
@@ -74,16 +73,25 @@ object EventReadWrites {
       (__ \ "status").write[VotingValue]
     )(unlift(Vote.unapply))
 
+  /*
+     it's a wrapper class which helps to convert Map -> Array
+   */
+  case class CandidateDate(date: LocalDateTime, votes: Seq[Vote])
+
+  implicit val candidateDateWrites: Writes[CandidateDate] = (o: CandidateDate) =>
+    Json.obj(
+      "date" -> DateFormatter.date2string(o.date),
+      "votes" -> o.votes
+    )
+
   //ここはパスあとで
-  implicit val mapWrites: Writes[Map[LocalDateTime, Seq[Vote]]] = (map: Map[LocalDateTime, Seq[Vote]]) => {
-
-  }
-
+  implicit val candidateDatesWrites: Writes[Map[LocalDateTime, Seq[Vote]]] = (o: Map[LocalDateTime, Seq[Vote]]) =>
+    Json.toJson(o.map(v => CandidateDate(v._1, v._2)))
 
   implicit val eventWrites: Writes[Event] = (
     (__ \ "id").write[Int] and
       (__ \ "eventName").write[String] and
-      (__ \ "candidateDates" ).write[Map[LocalDateTime, Seq[Vote]]] and
+      (__ \ "candidateDates").write[Map[LocalDateTime, Seq[Vote]]] and
       (__ \ "deadline").write[LocalDateTime] and
       (__ \ "comment").write[String]
   )(unlift(Event.unapply))

@@ -108,7 +108,7 @@ class EventControllersSpec extends FlatSpec with Matchers {
         |        },
         |    {
         |        "date": "2019-09-01 19:00",
-        |        "vote": [
+        |        "votes": [
         |            {
         |                "participant": "name1",
         |                "status":1
