@@ -82,9 +82,9 @@ class EventControllersSpec extends FlatSpec with Matchers {
 
   "toJson" should "return json format of event class" in {
     val event: Event = Event(1, "test_event",
-      Map((DateFormatter.string2date("2019-08-30 19:00") -> Seq(Vote("name1", VotingValue.Sankaku), Vote("name2", VotingValue.Maru))),
-        (DateFormatter.string2date("2019-09-01 19:00") -> Seq(Vote("name1", VotingValue.Sankaku), Vote("name2", VotingValue.Batu)))),
-        DateFormatter.string2date("2019-08-29 19:00"),
+      Map((DateFormatter.string2date("2019-08-30T19:00:00") -> Seq(Vote("name1", VotingValue.Sankaku), Vote("name2", VotingValue.Maru))),
+        (DateFormatter.string2date("2019-09-01T19:00:00") -> Seq(Vote("name1", VotingValue.Sankaku), Vote("name2", VotingValue.Batu)))),
+        DateFormatter.string2date("2019-08-29T19:00:00"),
         "test_comment")
 
     val a: JsValue = Json.parse(
@@ -94,7 +94,7 @@ class EventControllersSpec extends FlatSpec with Matchers {
         |    "eventName": "test_event",
         |    "candidateDates":[
         |    {
-        |        "date": "2019-08-30 19:00",
+        |        "date": "2019-08-30T19:00:00",
         |        "votes": [
         |                {
         |                    "participant": "name1",
@@ -107,8 +107,8 @@ class EventControllersSpec extends FlatSpec with Matchers {
         |            ]
         |        },
         |    {
-        |        "date": "2019-09-01 19:00",
-        |        "vote": [
+        |        "date": "2019-09-01T19:00:00",
+        |        "votes": [
         |            {
         |                "participant": "name1",
         |                "status":1
@@ -120,7 +120,7 @@ class EventControllersSpec extends FlatSpec with Matchers {
         |            ]
         |      }
         |     ],
-        |    "deadline": "2019-08-29 19:00",
+        |    "deadline": "2019-08-29T19:00:00",
         |    "comment": "test_comment"
         |  }
       """.stripMargin)
