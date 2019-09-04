@@ -104,10 +104,13 @@ object EventReadWrites {
         case e: JsError => None
       }
     }
+<<<<<<< HEAD
 
   //イベントの変更のJsonのやりとり
 
   //投票内容のJsonのやりとり
   //投票結果のJsonのやりとり
   //投票のJsonの構造
+=======
+>>>>>>> c9b29f4b3dd4d7bf91b2486b99cf4bc2dfe0121f
 }
