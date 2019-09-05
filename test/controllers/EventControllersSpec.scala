@@ -14,7 +14,7 @@ class EventControllersSpec extends FlatSpec with Matchers {
 //        |    "eventName": "example_event",
 //        |    "candidateDates":[
 //        |    {
-//        |        "date": "2019/08/30",
+//        |        "date": "2019-08-30T19:00:00",
 //        |        "votes": [
 //        |                {
 //        |                    "participant": "name1",
@@ -27,7 +27,7 @@ class EventControllersSpec extends FlatSpec with Matchers {
 //        |            ]
 //        |        },
 //        |    {
-//        |        "date": "2019/09/01",
+//        |        "date": "2019-09-01T19:00:00",
 //        |        "vote": [
 //        |            {
 //        |                "participant": "name1",
@@ -40,7 +40,7 @@ class EventControllersSpec extends FlatSpec with Matchers {
 //        |            ]
 //        |      }
 //        |     ],
-//        |    "deadline": "2019-08-29",
+//        |    "deadline": "2019-08-29T:19:00:00",
 //        |    "comment": "example comment"
 //        |  }
 //      """.stripMargin)
@@ -57,20 +57,21 @@ class EventControllersSpec extends FlatSpec with Matchers {
           }
       """.stripMargin)
     println(json)
-//    val voteResult: JsResult[Vote] = json.validate[Vote]
-//    println(voteResult)
-//    val vote: Vote = voteResult match {
-//      case v: JsSuccess[Vote] => v.get
-//      case e: JsError => Vote("none", VotingValue.Batu)
-//    }
-//    println(vote)
-//    assert(vote == Vote("name1", VotingValue.Maru))
+    val voteResult: JsResult[Vote] = json.validate[Vote]
+    println("hoge")
+    println(voteResult)
+    val vote: Vote = voteResult match {
+      case v: JsSuccess[Vote] => v.get
+      case e: JsError => Vote("none", VotingValue.Batu)
+    }
+    println(vote)
+    assert(vote == Vote("name1", VotingValue.Maru))
   }
 
   "toJson" should "return json format of vote class" in {
     val vote: Vote = Vote("name1", VotingValue.Maru)
     val json: JsValue = Json.toJson(vote)
-    print(json)
+//    print(json)
     assert(json == Json.parse(
       """
         |{
@@ -107,11 +108,7 @@ class EventControllersSpec extends FlatSpec with Matchers {
         |            ]
         |        },
         |    {
-<<<<<<< HEAD
         |        "date": "2019-09-01T19:00:00",
-=======
-        |        "date": "2019-09-01 19:00",
->>>>>>> c9b29f4b3dd4d7bf91b2486b99cf4bc2dfe0121f
         |        "votes": [
         |            {
         |                "participant": "name1",
@@ -131,6 +128,30 @@ class EventControllersSpec extends FlatSpec with Matchers {
 
     val json = Json.toJson(event)
     assert(json == a)
+  }
+
+  "votingFromJson" should "return voting class instance" in {
+    val json: JsValue = Json.parse(
+      """
+        |{
+        |    "id": 1,
+        |    "participant": "name1",
+        |    "votes":[
+        |              {
+        |                "date": "2019-09-04T19:00:00",
+        |                "status": 2
+        |              },
+        |              {
+        |                "date": "2019-09-05T20:00:00",
+        |                "status": 0
+        |              }
+        |            ]
+        |  }
+      """.stripMargin)
+
+    assert(EventReadWrites.votingFromJson(json).get == Voting(1, "name1",
+      Seq(ParticipateStatus(DateFormatter.string2date("2019-09-04T19:00:00"), VotingValue.Maru),
+        ParticipateStatus(DateFormatter.string2date("2019-09-05T20:00:00"), VotingValue.Batu))))
   }
 
 }
