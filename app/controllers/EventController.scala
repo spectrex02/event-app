@@ -61,7 +61,7 @@ object EventReadWrites {
     )(Vote)
 
   implicit val votingValueReads: Reads[VotingValue] = (value: JsValue) =>
-    JsSuccess(VotingValue.apply(value.as[Int]))
+    JsSuccess(VotingValue.from(value.as[Int]))
 
   implicit val candidateDateReads: Reads[CandidateDate] = (
     (__ \ "date").read[LocalDateTime] and
