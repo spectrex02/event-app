@@ -2,19 +2,20 @@ package controllers
 
 import java.time.LocalDateTime
 
-import domain.entity.{DateFormatter, Event, Vote, VotingValue}
+import domain.entity.{Candidate, CandidateDates, DateFormatter, Event, Vote, VotingValue}
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
-
 import javax.inject.Inject
 import play.api.mvc._
 
+import scala.collection.JavaConverters._
+
 
 class EventController @Inject() (cc: ControllerComponents) extends AbstractController(cc) {
-  def createEvent() = Action { implicit request =>
-    val eventResult = request.body.asJson
-    Ok()
-  }
+//  def createEvent() = Action { implicit request =>
+//    val eventResult = request.body.asJson
+//    Ok()
+//  }
 }
 
 object EventReadWrites {
@@ -52,8 +53,6 @@ object EventReadWrites {
   /*
      it's a wrapper class which helps to convert Map -> Array
    */
-  case class CandidateDate(date: LocalDateTime, votes: Seq[Vote])
-
 
   implicit val voteReads: Reads[Vote] = (
     (__ \ "participant").read[String] and
@@ -63,18 +62,24 @@ object EventReadWrites {
   implicit val votingValueReads: Reads[VotingValue] = (value: JsValue) =>
     JsSuccess(VotingValue.apply(value.as[Int]))
 
-  implicit val candidateDateReads: Reads[CandidateDate] = (
+  implicit val candidateReads: Reads[Candidate] = (
     (__ \ "date").read[LocalDateTime] and
-      (__ \ "vote").read[Vote]
-  )(CandidateDate.apply _)
+      (__ \ "vote").read[Seq[Vote]]
+  )(Candidate.apply _)
 
-  implicit val candidateDatesReads: Reads[Map[LocalDateTime, Seq[Vote]]] = (value: JsValue) =>
+//  implicit val candidateSeqReads: Reads[Seq[Candidate]] = Reads.seq(candidateReads)
 
+  implicit val candidateDatesReads: Reads[CandidateDates] =
+    __.read[Seq[Candidate]].map(CandidateDates)
+
+
+//  implicit val candidateDatesReads: Reads[CandidateDates] = (v: JsValue) =>
+//    v.
 
   implicit val eventReads: Reads[Event] = (
     (__ \ "id").read[Int] and
       (__ \ "eventName").read[String] and
-      (__ \ "candidateDates").read[Map[LocalDateTime, Seq[Vote]]] and
+      (__ \ "candidateDates").read[CandidateDates] and
       (__ \ "deadline").read[LocalDateTime] and
       (__ \ "comment").read[String]
     )(Event.apply _)
@@ -87,20 +92,30 @@ object EventReadWrites {
       (__ \ "status").write[VotingValue]
     )(unlift(Vote.unapply))
 
-  implicit val candidateDateWrites: Writes[CandidateDate] = (o: CandidateDate) =>
-    Json.obj(
-      "date" -> DateFormatter.date2string(o.date),
-      "votes" -> o.votes
-    )
+  implicit val candidateWrites: Writes[Candidate] = (
+    (__ \ "date").write[LocalDateTime] and
+      (__ \ "votes").write[Seq[Vote]]
+  )(unlift(Candidate.unapply))
+
+  implicit val candidateDatesWrites: Writes[CandidateDates] = (c: CandidateDates) =>
+    Json.toJson(c.candidate)
+//    Json.toJson(c.asInstanceOf[Seq[Candidate]])
+//  val a: CandidateDates => Seq[Candidate] = (c: CandidateDates) => c.candidate
+
+//  implicit val candidateDateWrites: Writes[CandidateDate] = (o: CandidateDate) =>
+//    Json.obj(
+//      "date" -> DateFormatter.date2string(o.date),
+//      "votes" -> o.votes
+//    )
 
   //ここはパスあとで
-  implicit val candidateDatesWrites: Writes[Map[LocalDateTime, Seq[Vote]]] = (o: Map[LocalDateTime, Seq[Vote]]) =>
-    Json.toJson(o.map(v => CandidateDate(v._1, v._2)))
+//  implicit val candidateDatesWrites: Writes[Map[LocalDateTime, Seq[Vote]]] = (o: Map[LocalDateTime, Seq[Vote]]) =>
+//    Json.toJson(o.map(v => CandidateDate(v._1, v._2)))
 
   implicit val eventWrites: Writes[Event] = (
     (__ \ "id").write[Int] and
       (__ \ "eventName").write[String] and
-      (__ \ "candidateDates").write[Map[LocalDateTime, Seq[Vote]]] and
+      (__ \ "candidateDates").write[CandidateDates] and
       (__ \ "deadline").write[LocalDateTime] and
       (__ \ "comment").write[String]
   )(unlift(Event.unapply))

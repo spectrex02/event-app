@@ -16,27 +16,33 @@ object EventRepository {
   //一件取得
   def find(id: Int)(implicit session: DBSession): Option[Event]= {
     //候補日以外のイベントのフィールドを取得
-    val tmp: Option[Event] = sql"select * from event where id = $id".map{
+    val emptyEvent: Option[Event] = sql"select * from event where id = $id".map{
       rs => Event(id = rs.get("id"),
                   eventName = rs.get("event_name"),
-          candidateDates = rs.string("candidate_dates").split(",").toSeq.map(date => DateFormatter.string2date(date) -> Seq.empty[Vote]).toMap,
+//          candidateDates = rs.string("candidate_dates").split(",").toSeq.map(date => DateFormatter.string2date(date) -> Seq.empty[Vote]).toMap,
+          candidateDates = CandidateDates(rs.string("candidate_dates").split(",").toSeq.map {date =>
+                                                                                                    Candidate(DateFormatter.string2date(date), Seq.empty[Vote]) }),
         deadline = rs.get("deadline"),
         comment = rs.get("comment"))
     }.single().apply()
 
-    //Map[LocalDateTime, Seq[Vote]]
-    val vv: List[(LocalDateTime, Vote)] = sql"select * from vote where event_id = $id".map{ rs =>
-      rs.localDateTime("voting_date") -> Vote(rs.get("participant_name"), Util.Int2VotingValue(rs.int("voting_status")))
+    //rebuild vote
+    val votingSeq: List[(LocalDateTime, Vote)] = sql"select * from vote where event_id = $id".map{ rs =>
+      (rs.localDateTime("voting_date"),Vote(rs.get("participant_name"), VotingValue(rs.int("voting_status"))))
     }.list().apply()
 
-    val v2: Map[LocalDateTime, List[Vote]] = vv.groupBy{ case (date: LocalDateTime, vote: Vote) =>
+    val votingMap: Map[LocalDateTime, List[Vote]] = votingSeq.groupBy { case (date: LocalDateTime, vote: Vote) =>
       date
     }.mapValues(_.map(_._2))
 
+    val actualcandidateDates: CandidateDates = votingSeq.groupBy { case (date: LocalDateTime, vote: Vote) => date }.mapValues(_.map(_._2)).map { case (date: LocalDateTime, votes: Seq[Vote]) =>
+      CandidateDates(Seq(Candidate(date, votes)))
+    }.head
 
 
-    tmp match {
-      case Some(e) => if(v2 == Map.empty[LocalDateTime, Seq[Vote]]) Some(e) else Some(e.copy(candidateDates = v2))
+    emptyEvent match {
+//      case Some(e) => if(v2 == Map.empty[LocalDateTime, Seq[Vote]]) Some(e) else Some(e.copy(candidateDates = v2))
+      case Some(e) =>if(actualcandidateDates == Seq.empty[Candidate]) Some(e) else Some(e.copy(candidateDates = actualcandidateDates))
       case None => None
     }
   }
@@ -49,7 +55,8 @@ object EventRepository {
   //新規イベントをDBに追加
   def insertEvent(event: Event, plannerName: String)(implicit session: AutoSession): Boolean = {
 //    val dates: Array[Timestamp] = event.candidateDates.keys.map(date => Timestamp.valueOf(date)).toArray
-    val dates: String = event.candidateDates.keys.map(date => DateFormatter.date2string(date)).mkString(",")
+//    val dates: String = event.candidateDates.keys.map(date => DateFormatter.date2string(date)).mkString(",")
+    val dates: String = event.candidateDates.collect().map(date => DateFormatter.date2string(date)).mkString(",")
     val dl: String = DateFormatter.date2string(event.deadline)
     sql"insert into event (event_name, candidate_dates, deadline, comment, planner) values (${event.eventName}, ${dates}, ${dl}, ${event.comment}, ${plannerName})".execute().apply()
   }
