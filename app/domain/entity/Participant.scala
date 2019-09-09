@@ -11,14 +11,14 @@ case class Participant(name: String) {
     //投票する
     event.copy(
 //      candidateDates = event.candidateDates + (date -> newVoting)
-      candidateDates = event.candidateDates.update(date, Vote(name, VotingValue(votingStatus)))
+      candidateDates = event.candidateDates.update(date, Vote(name, VotingValue.from(votingStatus)))
     )
   }
 
   def updateVoting(event: Event, date: LocalDateTime, votingStatus:  Int): Event = {
     //投票内容を変更する
     event.copy (
-      candidateDates = event.candidateDates.replace(date, Vote(name, VotingValue(votingStatus)))
+      candidateDates = event.candidateDates.replace(date, Vote(name, VotingValue.from(votingStatus)))
       )
   }
 

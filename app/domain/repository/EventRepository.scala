@@ -28,7 +28,7 @@ object EventRepository {
 
     //rebuild vote
     val votingSeq: List[(LocalDateTime, Vote)] = sql"select * from vote where event_id = $id".map{ rs =>
-      (rs.localDateTime("voting_date"),Vote(rs.get("participant_name"), VotingValue(rs.int("voting_status"))))
+      (rs.localDateTime("voting_date"),Vote(rs.get("participant_name"), VotingValue.from(rs.int("voting_status"))))
     }.list().apply()
 
     val votingMap: Map[LocalDateTime, List[Vote]] = votingSeq.groupBy { case (date: LocalDateTime, vote: Vote) =>
@@ -82,8 +82,24 @@ object EventRepository {
 ////    }.execute().apply()
 //  }
   //イベント情報の更新をデータベースに反映させる
-  def updateEvent(event: Event)(implicit session: AutoSession): Boolean = sql"update table event set where event_name = $event.eventName, id = $event.id".execute().apply()
+//  def updateEvent(event: Event, plannerName: String)(implicit session: AutoSession): Boolean = {
+//    sql"update table event set (event_name, candidate_dates, deadline, comment, planner) values ($event.eventName, $dates, $event.deadline, $event.comment)where event_name = $event.eventName and id = $event.id".execute().apply()
+//  }
 
+
+  def updateEventName(event: Event)(implicit session: AutoSession): Boolean = sql"update table event set (event_name) values ($event.eventName) where id = $event.id".execute().apply()
+
+  def updateDeadline(event: Event)(implicit session: AutoSession): Boolean = sql"update table event set deadline values $event.deadline where id = $event.id".execute().apply()
+
+  def updateComment(event: Event)(implicit session: AutoSession): Boolean = sql"update table event set comment values $event.comment where id = $event.id".execute().apply()
+
+  def updatePlanner(event: Event, planner: String)(implicit session: AutoSession): Boolean = sql"update table event set planner values $planner where id = $event.id".execute().apply()
+
+  def updateCandidateDates(newEvent: Event, oldEvent: Event): Boolean = {
+    val dates = newEvent.candidateDates.collect().map(date => DateFormatter.date2string(date)).mkString(",")
+    sql"update event table event set candidate_dates value $dates where id = $newEvent.id".execute().apply()
+    //vote table update
+  }
   //イベントの削除をDBに反映
   def deleteEvent(eventId: Int)(implicit session: AutoSession): Boolean = sql"delete from event where id = $eventId".execute().apply()
   //イベントの投票期間締め切り

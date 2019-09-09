@@ -9,7 +9,7 @@ case class Planner(name: String) {
   //メソッド定義
   def createEvent(eventName: String, candidateDates: Seq[LocalDateTime], deadline:  LocalDateTime, comment:  String):  Event = {
     //イベント作成
-    Event(-1, eventName, candidateDates.map(date => date -> Seq.empty[Vote]).toMap, deadline, comment)
+    Event(-1, eventName, CandidateDates(candidateDates.map(date => Candidate(date, Seq.empty[Vote]))), deadline, comment)
   }
 
   def updateEvent(event: Event, newEventName: Option[String] = None,
@@ -17,16 +17,19 @@ case class Planner(name: String) {
                   newDeadline: Option[LocalDateTime] = None,
                   newComment:  Option[String] = None): Event = {
 
-    //候補日の変更
-    val newDate: Map[LocalDateTime, Seq[Vote]] = newCandidateDates.map{ dates: Seq[LocalDateTime] =>
-      // Map henkan
-      dates.map( date => date -> event.candidateDates.getOrElse(date, Seq.empty[Vote])).toMap
-    }.getOrElse(event.candidateDates)
-
+      //候補日の変更
+//    val newDate: Map[LocalDateTime, Seq[Vote]] = newCandidateDates.map{ dates: Seq[LocalDateTime] =>
+//      // Map henkan
+//      dates.map( date => date -> event.candidateDates.getOrElse(date, Seq.empty[Vote])).toMap
+//    }.getOrElse(event.candidateDates)
+      val newDates: Option[CandidateDates] = newCandidateDates match {
+        case Some(dates) => Some(CandidateDates(dates.map(d => Candidate(d, Seq.empty[Vote]))))
+        case None => None
+      }
 
     event.copy(
       eventName = newEventName.getOrElse(event.eventName),
-      candidateDates = newDate,
+      candidateDates = newDates.getOrElse(event.candidateDates),
       deadline = newDeadline.getOrElse(event.deadline),
       comment = newComment.getOrElse(event.comment)
     )

@@ -9,16 +9,16 @@ class ParticipantSpec extends FlatSpec with Matchers {
 
     val participant1 = Participant("participant1")
     val participant2 = Participant("participant2")
-    assert(testEvent.candidateDates(DateFormatter.string2date("2019-07-30 19:00")) == Seq.empty[Vote])
+    assert(testEvent.candidateDates.findBy(DateFormatter.string2date("2019-07-30 19:00")) == Seq.empty[Vote])
 
     var updatedEvent: Event = participant1.createVoting(testEvent, DateFormatter.string2date("2019-07-30 19:00"), 2)
-    assert(updatedEvent.candidateDates(DateFormatter.string2date("2019-07-30 19:00")) == Seq(Vote("participant1", VotingValue.Maru)))
+    assert(updatedEvent.candidateDates.findBy(DateFormatter.string2date("2019-07-30 19:00")) == Seq(Vote("participant1", VotingValue.Maru)))
 
     updatedEvent = participant2.createVoting(updatedEvent, DateFormatter.string2date("2019-07-30 19:00"), 1)
-    assert(updatedEvent.candidateDates(DateFormatter.string2date("2019-07-30 19:00")) == Seq(Vote("participant1", VotingValue.Maru), Vote("participant2", VotingValue.Sankaku)))
+    assert(updatedEvent.candidateDates.findBy(DateFormatter.string2date("2019-07-30 19:00")) == Seq(Vote("participant1", VotingValue.Maru), Vote("participant2", VotingValue.Sankaku)))
 
     updatedEvent = participant1.createVoting(updatedEvent, DateFormatter.string2date("2019-07-31 19:00"), 0)
-    assert(updatedEvent.candidateDates(DateFormatter.string2date("2019-07-31 19:00")) == Seq(Vote("participant1", VotingValue.Batu)))
+    assert(updatedEvent.candidateDates.findBy(DateFormatter.string2date("2019-07-31 19:00")) == Seq(Vote("participant1", VotingValue.Batu)))
   }
 
   "updateVoting" should "return new event instance that is updated by participants" in {
@@ -37,11 +37,11 @@ class ParticipantSpec extends FlatSpec with Matchers {
 
     //participant1-> (07-30, Batu)
     updatedEvent = participant1.updateVoting(updatedEvent, DateFormatter.string2date("2019-07-30 19:00"), 0)
-    assert(updatedEvent.candidateDates(DateFormatter.string2date("2019-07-30 19:00")) == Seq(Vote("participant2", VotingValue.Sankaku), Vote("participant1", VotingValue.Batu)))
+    assert(updatedEvent.candidateDates.findBy(DateFormatter.string2date("2019-07-30 19:00")) == Seq(Vote("participant2", VotingValue.Sankaku), Vote("participant1", VotingValue.Batu)))
 
     //participant2-> (07-30, Maru)
     updatedEvent = participant2.updateVoting(updatedEvent, DateFormatter.string2date("2019-07-30 19:00"), 2)
-    assert(updatedEvent.candidateDates(DateFormatter.string2date("2019-07-30 19:00")) == Seq(Vote("participant1", VotingValue.Batu), Vote("participant2", VotingValue.Maru)))
+    assert(updatedEvent.candidateDates.findBy(DateFormatter.string2date("2019-07-30 19:00")) == Seq(Vote("participant1", VotingValue.Batu), Vote("participant2", VotingValue.Maru)))
   }
 
   "deleteVoting" should "return new event instance from which some voting is deleted by user." in {
@@ -59,10 +59,10 @@ class ParticipantSpec extends FlatSpec with Matchers {
     updatedEvent = participant1.createVoting(updatedEvent, DateFormatter.string2date("2019-07-31 19:00"), 0)
 
     updatedEvent = participant1.deleteVoting(updatedEvent, DateFormatter.string2date("2019-07-31 19:00"))
-    assert(updatedEvent.candidateDates(DateFormatter.string2date("2019-07-31 19:00")) == Seq.empty[Vote])
+    assert(updatedEvent.candidateDates.findBy(DateFormatter.string2date("2019-07-31 19:00")) == Seq.empty[Vote])
 
     updatedEvent = participant1.deleteVoting(updatedEvent, DateFormatter.string2date("2019-07-30 19:00"))
-    assert(updatedEvent.candidateDates(DateFormatter.string2date("2019-07-30 19:00")) == Seq(Vote("participant2", VotingValue.Sankaku)))
+    assert(updatedEvent.candidateDates.findBy(DateFormatter.string2date("2019-07-30 19:00")) == Seq(Vote("participant2", VotingValue.Sankaku)))
 
   }
 }

@@ -21,8 +21,8 @@ class EventRepositorySpec extends FlatSpec with Matchers {
 //  }
 
   "insertEvent" should "return Boolean" in {
-    val newEvent = Event(-1, "insertEvent", Map(DateFormatter.string2date("2019-08-12 10:00") -> Seq.empty[Vote]), DateFormatter.string2date("2019-08-07 17:00"), "insert event test")
-
+    val newEvent = Event(-1, "insertEvent", CandidateDates(Seq(Candidate(DateFormatter.string2date("2019-08-12T10:00:00"), Seq.empty[Vote]))), DateFormatter.string2date("2019-08-07 17:00"), "insert event test")
+//    Map(DateFormatter.string2date("2019-08-12 10:00") -> Seq.empty[Vote])
     assert(EventRepository.insertEvent(newEvent, "tester for insert") == true)
   }
 }
