@@ -26,7 +26,8 @@ case class Planner(name: String) {
         case Some(dates) => Some(CandidateDates(dates.map(d => Candidate(d, Seq.empty[Vote]))))
         case None => None
       }
-
+      println(newDates.getOrElse(event.candidateDates))
+      println(event.candidateDates)
     event.copy(
       eventName = newEventName.getOrElse(event.eventName),
       candidateDates = newDates.getOrElse(event.candidateDates),
