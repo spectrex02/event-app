@@ -7,52 +7,52 @@ import EventReadWrites._
 import play.api.libs.EventSource.EventDataExtractor
 
 class EventControllersSpec extends FlatSpec with Matchers {
-//  "fromJson" should "return Option[Event] class instance." in {
-//    val json: JsValue = Json.parse(
-//      """
-//        |{
-//        |    "id": 1,
-//        |    "eventName": "example_event",
-//        |    "candidateDates":[
-//        |    {
-//        |        "date": "2019-08-30T19:00:00",
-//        |        "votes": [
-//        |                {
-//        |                    "participant": "name1",
-//        |                    "status": 1
-//        |                },
-//        |                {
-//        |                    "participant": "name2",
-//        |                    "status": 2
-//        |                }
-//        |            ]
-//        |        },
-//        |    {
-//        |        "date": "2019-09-01T19:00:00",
-//        |        "votes": [
-//        |            {
-//        |                "participant": "name1",
-//        |                "status":1
-//        |            },
-//        |            {
-//        |                "participant": "name2",
-//        |                "status": 0
-//        |            }
-//        |            ]
-//        |      }
-//        |     ],
-//        |    "deadline": "2019-08-29T:19:00:00",
-//        |    "comment": "example comment"
-//        |  }
-//      """.stripMargin)
-//
-//    println(json)
-////    assert(EventReadWrites.eventfromJson(json).getOrElse(Event(0,"none", CandidateDates(Seq.empty[Candidate]), DateFormatter.string2date("2019-09-09T14:00:00"), "none")).id == 1)
-//    val a: Option[Event] = EventReadWrites.eventfromJson(json)
-//    println(a)
-//    println(a.get)
-//    assert(EventReadWrites.eventfromJson(json).get.id ==1)
-//  }
+  "fromJson" should "return Option[Event] class instance." in {
+    val json: JsValue = Json.parse(
+      """
+        |{
+        |    "id": 1,
+        |    "eventName": "example_event",
+        |    "candidateDates":[
+        |    {
+        |        "date": "2019-08-30T19:00:00",
+        |        "votes": [
+        |                {
+        |                    "participant": "name1",
+        |                    "status": 1
+        |                },
+        |                {
+        |                    "participant": "name2",
+        |                    "status": 2
+        |                }
+        |            ]
+        |        },
+        |    {
+        |        "date": "2019-09-01T19:00:00",
+        |        "votes": [
+        |            {
+        |                "participant": "name1",
+        |                "status":1
+        |            },
+        |            {
+        |                "participant": "name2",
+        |                "status": 0
+        |            }
+        |            ]
+        |      }
+        |     ],
+        |    "deadline": "2019-08-29T:19:00:00",
+        |    "comment": "example comment"
+        |  }
+      """.stripMargin)
+
+    println(json)
+//    assert(EventReadWrites.eventfromJson(json).getOrElse(Event(0,"none", CandidateDates(Seq.empty[Candidate]), DateFormatter.string2date("2019-09-09T14:00:00"), "none")).id == 1)
+    val a: Option[Event] = EventReadWrites.eventfromJson(json)
+    println(a)
+    println(a.get)
+    assert(EventReadWrites.eventfromJson(json).get.id ==1)
+  }
 
   "votingValueReads" should "return jsvalue" in {
     val json: JsValue = Json.parse(
