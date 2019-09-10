@@ -2,6 +2,7 @@ package controllers
 
 import java.time.LocalDateTime
 
+import controllers.PlayJsonFormats._
 import domain.entity.{Candidate, CandidateDates, DateFormatter, Event, Vote, VotingValue}
 import domain.repository.EventRepository
 import play.api.libs.functional.syntax._
@@ -9,8 +10,6 @@ import play.api.libs.json._
 import javax.inject.Inject
 import play.api.mvc._
 import scalikejdbc.AutoSession
-
-
 
 import scala.collection.JavaConverters._
 
@@ -52,8 +51,39 @@ class EventController @Inject() (cc: ControllerComponents) extends AbstractContr
     Ok
   }
 
-  def deleteEvent() = Action { implicit request: Request[AnyContent] =>
+  def deleteEvent(id: Int) = Action { implicit request: Request[AnyContent] =>
+    val queryResult: Boolean = EventRepository.deleteEvent(id)
+    queryResult match {
+      case true => Ok("event deleted.")
+      case false => new Status(BAD_REQUEST)
+    }
+  }
 
+  def createVote() = Action { implicit request: Request[AnyContent] =>
+    //def insertVoting(eventId: Int, votingDate: LocalDateTime, vote: Vote)
+//    case class ParticipateStatus(date: LocalDateTime, status: VotingValue)
+//    case class Voting(id: Int, participant: String, votes: Seq[ParticipateStatus])
+    //pay attention to defference between insertVoting and votingFromJson
+    val votingOpt: Option[Voting] = request.body.asJson match {
+      case Some(v) => PlayJsonFormats.votingFromJson(v)
+      case None => None
+    }
+    val voting: Voting = votingOpt match {
+      case Some(v) => v
+      case None => sys.error("Found unknown vlaue.")
+    }
+
+    //苦肉の策
+    val eventId: Int = voting.id
+    val participantName: String = voting.participant
+    val resultSeq: Seq[Boolean] = voting.votes.map { dateAndStatus =>
+      EventRepository.insertVoting(eventId, dateAndStatus.date, Vote(participantName, dateAndStatus.status))
+    }
+
+    resultSeq.forall(r => true) match {
+      case true => Ok
+      case false => new Status(BAD_REQUEST)
+    }
   }
 
 //  def updateEvent() = Action { implicit request: Request[AnyContent] =>

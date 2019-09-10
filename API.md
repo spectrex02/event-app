@@ -13,9 +13,9 @@
 {
     "planner":  "planner name",
     "eventName": "eventName(string)",
-    "candidateDate": ["date1(string)", "date2", ...],
+    "candidateDate": ["date1(string)", "date2"],
     "deadline": "deadline(string)",
-    "comment":  "comment(string)",
+    "comment":  "comment(string)"
 }
 ```
 ### レスポンス
@@ -76,7 +76,7 @@ Content-Type:application/json;charset=utf-8
     "name": "newEventName",
     "candidateDate": null,
     "deadline": null,
-    "comment":  null,
+    "comment":  null
 }
 ```
 ### Response
@@ -199,6 +199,6 @@ Content-Type:application/json;charset=utf-8
 |:---:|:---:|:---:|
 |event_id|id|key|
 |participant_name|varchar(32)|key|
-|voting_date|timestamp|key|
+|voting_date|char(32)|key|
 |voting_status|int|
 
