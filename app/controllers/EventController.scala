@@ -47,6 +47,15 @@ class EventController @Inject() (cc: ControllerComponents) extends AbstractContr
     Ok
   }
 
+  def updateEvent() = Action { implicit request: Request[AnyContent] =>
+
+    Ok
+  }
+
+  def deleteEvent() = Action { implicit request: Request[AnyContent] =>
+
+  }
+
 //  def updateEvent() = Action { implicit request: Request[AnyContent] =>
 //    update event
 //  }
