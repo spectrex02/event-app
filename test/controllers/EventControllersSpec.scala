@@ -7,7 +7,10 @@ import PlayJsonFormats._
 import play.api.libs.EventSource.EventDataExtractor
 
 class EventControllersSpec extends FlatSpec with Matchers {
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0bcb47fef82beca4cffbfef0f34a9d7e3867709a
   "fromJson" should "return Option[Event] class instance." in {
     val json: JsValue = Json.parse(
       """
@@ -48,6 +51,7 @@ class EventControllersSpec extends FlatSpec with Matchers {
       """.stripMargin)
 
     println(json)
+<<<<<<< HEAD
 //    assert(PlayJsonFormats.eventFromJson(json).getOrElse(Event(0,"none", CandidateDates(Seq.empty[Candidate]), DateFormatter.string2date("2019-09-09T14:00:00"), "none")).id == 1)
     val a: Option[Event] = PlayJsonFormats.eventFromJson(json)
     println(a)
@@ -102,6 +106,14 @@ class EventControllersSpec extends FlatSpec with Matchers {
     assert(PlayJsonFormats.eventFromJson(json).getOrElse(CandidateDates(Seq.empty[Candidate])) != CandidateDates(Seq.empty[Candidate]))
   }
 
+=======
+//    assert(EventReadWrites.eventfromJson(json).getOrElse(Event(0,"none", CandidateDates(Seq.empty[Candidate]), DateFormatter.string2date("2019-09-09T14:00:00"), "none")).id == 1)
+    val a: Option[Event] = EventReadWrites.eventfromJson(json)
+    println(a)
+//    println(a.get)
+    assert(EventReadWrites.eventfromJson(json).getOrElse(CandidateDates(Seq.empty[Candidate])) != CandidateDates(Seq.empty[Candidate]))
+  }
+>>>>>>> 0bcb47fef82beca4cffbfef0f34a9d7e3867709a
 
   "votingValueReads" should "return jsvalue" in {
     val json: JsValue = Json.parse(
