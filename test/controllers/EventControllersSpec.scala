@@ -41,7 +41,7 @@ class EventControllersSpec extends FlatSpec with Matchers {
         |            ]
         |      }
         |     ],
-        |    "deadline": "2019-08-29T:19:00:00",
+        |    "deadline": "2019-08-29T19:00:00",
         |    "comment": "example comment"
         |  }
       """.stripMargin)
@@ -50,8 +50,8 @@ class EventControllersSpec extends FlatSpec with Matchers {
 //    assert(EventReadWrites.eventfromJson(json).getOrElse(Event(0,"none", CandidateDates(Seq.empty[Candidate]), DateFormatter.string2date("2019-09-09T14:00:00"), "none")).id == 1)
     val a: Option[Event] = EventReadWrites.eventfromJson(json)
     println(a)
-    println(a.get)
-    assert(EventReadWrites.eventfromJson(json).get.id ==1)
+//    println(a.get)
+    assert(EventReadWrites.eventfromJson(json).getOrElse(CandidateDates(Seq.empty[Candidate])) != CandidateDates(Seq.empty[Candidate]))
   }
 
   "votingValueReads" should "return jsvalue" in {
