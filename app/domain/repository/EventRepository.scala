@@ -47,10 +47,11 @@ object EventRepository {
     }
   }
   //全件取得
-  def findAll()(implicit session: AutoSession): Seq[Event] = {
-    val eventId: Seq[Int] = sql"select id from event where status = true".map(_.int("id")).list().apply()
-    eventId.map(id => find(id).get)
-  }
+  def findAll()(implicit session: AutoSession): Map[Int, String] = sql"select (id, event_name) from event where status = true".map { rs =>
+      ((rs.int("id") -> rs.string("event_name")))
+    }.list().apply().toMap
+//    eventId.map(id => find(id).get)
+
 
   //新規イベントをDBに追加
   def insertEvent(event: Event, plannerName: String)(implicit session: AutoSession): Boolean = {
