@@ -8,6 +8,7 @@ import domain.entity._
 import java.time.LocalDateTime
 import java.util.Date
 
+import controllers.PlayJsonFormats.Voting
 import scalikejdbc._
 
 object EventRepository {
@@ -109,8 +110,9 @@ object EventRepository {
   //投票に関するクエリを実行するメソッドたち
   //投票をDBに反映させる
   def insertVoting(eventId: Int, votingDate: LocalDateTime, vote: Vote)(implicit session: AutoSession): Boolean = {
-    val date = DateFormatter.date2string(votingDate)
+    val date: String = DateFormatter.date2string(votingDate)
     sql"insert into vote (id, participant_name, voting_date, voting_status) values ($eventId, $vote.name, $date, $vote.voting_status)".execute().apply()
+
   }
 
   //投票内容の変更をDBに反映させる

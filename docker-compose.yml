@@ -1,0 +1,15 @@
+version: '3.7'
+
+services:
+  db:
+    container_name: event-app-db
+    image: postgres:9.5-alpine
+    environment:
+      POSTGRES_DB: eventapp
+      POSTGRES_USER: tomoya
+      POSTGRES_PASSWORD: tomoya
+    volumes:
+      - ./db/init:/docker-entrypoint-initdb.d
+      - ./db/data/:/var/lib/postgresql/data/
+    ports:
+      - 5000:5432
