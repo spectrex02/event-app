@@ -11,6 +11,8 @@ import java.util.Date
 import controllers.PlayJsonFormats.Voting
 import scalikejdbc._
 
+import scala.collection.immutable
+
 object EventRepository {
 
   implicit val session = AutoSession
@@ -23,18 +25,18 @@ object EventRepository {
 //          candidateDates = rs.string("candidate_dates").split(",").toSeq.map(date => DateFormatter.string2date(date) -> Seq.empty[Vote]).toMap,
           candidateDates = CandidateDates(rs.string("candidate_dates").split(",").toSeq.map {date =>
                                                                                                     Candidate(DateFormatter.string2date(date), Seq.empty[Vote]) }),
-        deadline = rs.get("deadline"),
+        deadline = DateFormatter.string2date(rs.string("deadline")),
         comment = rs.get("comment"))
     }.single().apply()
 
     //rebuild vote
-    val votingSeq: List[(LocalDateTime, Vote)] = sql"select * from vote where id = ${id}".map{ rs =>
-      (rs.localDateTime("voting_date"),Vote(rs.get("participant_name"), VotingValue.from(rs.int("voting_status"))))
+    val votingSeq: Seq[(LocalDateTime, Vote)] = sql"select * from vote where id = ${id}".map{ rs =>
+      (DateFormatter.string2date(rs.string("voting_date")),Vote(rs.get("participant_name"), VotingValue.from(rs.int("voting_status"))))
     }.list().apply()
 
-    val actualCandidateDates: CandidateDates = votingSeq.groupBy { case (date: LocalDateTime, vote: Vote) => date }.mapValues(_.map(_._2)).map { case (date: LocalDateTime, votes: Seq[Vote]) =>
-      CandidateDates(Seq(Candidate(date, votes)))
-    }.head
+    val a: Map[LocalDateTime, Seq[(LocalDateTime, Vote)]] = votingSeq.groupBy { case (d: LocalDateTime, v: Vote) => d }
+    val aa: Map[LocalDateTime, Seq[Vote]] = a.map { case (d: LocalDateTime, s: Seq[(LocalDateTime, Vote)]) => d -> s.map { case (date: LocalDateTime, vote: Vote) => vote}.toSeq }
+    val actualCandidateDates: CandidateDates = CandidateDates(aa.map { case (date: LocalDateTime, votes: Seq[Vote]) => Candidate(date, votes)}.toSeq)
 
 
     emptyEvent match {
@@ -44,7 +46,7 @@ object EventRepository {
     }
   }
   //全件取得
-  def findAll()(implicit session: AutoSession): Map[Int, String] = sql"select (id, event_name) from event where status = true".map { rs =>
+  def findAll()(implicit session: AutoSession): Map[Int, String] = sql"select id, event_name from event where status = true".map { rs =>
       ((rs.int("id") -> rs.string("event_name")))
     }.list().apply().toMap
 //    eventId.map(id => find(id).get)
@@ -103,7 +105,8 @@ object EventRepository {
   //イベントの削除をDBに反映
   def deleteEvent(eventId: Int)(implicit session: AutoSession): Boolean = sql"delete from event where id = ${eventId}".execute().apply()
   //イベントの投票期間締め切り
-  def closeEvent(eventId: Int)(implicit session: AutoSession): Boolean = sql"update table event set status = false where id = ${eventId}".execute().apply()
+  def closeEvent(eventId: Int)(implicit session: AutoSession): Boolean = sql"update event set status = false where id = ${eventId}".execute().apply()
+  def openEvent(eventId: Int)(implicit session: AutoSession): Boolean = sql"update event set status = true where id = ${eventId}".execute().apply()
 
   //投票に関するクエリを実行するメソッドたち
   //投票をDBに反映させる
