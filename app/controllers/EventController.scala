@@ -14,6 +14,7 @@ import scalikejdbc.AutoSession
 import scala.collection.JavaConverters._
 
 
+
 class EventController @Inject() (cc: ControllerComponents) extends AbstractController(cc) {
   implicit val session = AutoSession
 
@@ -29,7 +30,7 @@ class EventController @Inject() (cc: ControllerComponents) extends AbstractContr
   }
 
   def getAll() = Action { implicit request: Request[AnyContent] =>
-    //get all event data(Map[id: Int, event_name: String]) from datababse
+    //get all event data(Map[id: Int, event_name: String]) from database
     val eventList: Map[Int, String] = EventRepository.findAll()
     Created(PlayJsonFormats.eventListToJson(eventList))
   }
@@ -63,7 +64,7 @@ class EventController @Inject() (cc: ControllerComponents) extends AbstractContr
     //def insertVoting(eventId: Int, votingDate: LocalDateTime, vote: Vote)
 //    case class ParticipateStatus(date: LocalDateTime, status: VotingValue)
 //    case class Voting(id: Int, participant: String, votes: Seq[ParticipateStatus])
-    //pay attention to defference between insertVoting and votingFromJson
+    //pay attention to difference between insertVoting and votingFromJson
     val votingOpt: Option[Voting] = request.body.asJson match {
       case Some(v) => PlayJsonFormats.votingFromJson(v)
       case None => None

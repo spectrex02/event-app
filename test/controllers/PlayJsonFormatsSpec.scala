@@ -6,7 +6,7 @@ import play.api.libs.json._
 import PlayJsonFormats._
 import play.api.libs.EventSource.EventDataExtractor
 
-class EventControllersSpec extends FlatSpec with Matchers {
+class PlayJsonFormatsSpec extends FlatSpec with Matchers {
   "fromJson" should "return Option[Event] class instance." in {
     val json: JsValue = Json.parse(
       """

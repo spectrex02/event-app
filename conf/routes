@@ -6,6 +6,15 @@
 
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+#GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+
+GET     /event/all                  controllers.EventController.getAll()
+GET     /event/:id                  controllers.EventController.get(id: Int)
+
+POST     /event/create               controllers.EventController.createEvent()
+POST     /event/update               controllers.EventController.updateEvent()
+GET      /event/delete/:id               controllers.EventController.deleteEvent(id: Int)
+
+POST    /event/vote                 controllers.EventController.createVote()
 
       
