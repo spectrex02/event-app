@@ -59,7 +59,9 @@ object EventRepository {
 //    val dates: Array[Timestamp] = event.candidateDates.keys.map(date => Timestamp.valueOf(date)).toArray
 //    val dates: String = event.candidateDates.keys.map(date => DateFormatter.date2string(date)).mkString(",")
     val dates: String = event.candidateDates.collect().map(date => DateFormatter.date2string(date)).mkString(",")
+    println(dates)
     val dl: String = DateFormatter.date2string(event.deadline)
+    println(dl)
     sql"insert into event (event_name, candidate_dates, deadline, comment, planner) values (${event.eventName}, ${dates}, ${dl}, ${event.comment}, ${plannerName})".execute().apply()
   }
 
@@ -89,29 +91,29 @@ object EventRepository {
 //  }
 
 
-  def updateEventName(event: Event)(implicit session: AutoSession): Boolean = sql"update table event set (event_name) values ($event.eventName) where id = $event.id".execute().apply()
+  def updateEventName(event: Event)(implicit session: AutoSession): Boolean = sql"update event set event_name = ${event.eventName} where id = ${event.id}".execute().apply()
 
-  def updateDeadline(event: Event)(implicit session: AutoSession): Boolean = sql"update table event set deadline values $event.deadline where id = $event.id".execute().apply()
+  def updateDeadline(event: Event)(implicit session: AutoSession): Boolean = sql"update event set deadline = ${event.deadline} where id = ${event.id}".execute().apply()
 
-  def updateComment(event: Event)(implicit session: AutoSession): Boolean = sql"update table event set comment values $event.comment where id = $event.id".execute().apply()
+  def updateComment(event: Event)(implicit session: AutoSession): Boolean = sql"update event set comment = ${event.comment} where id = ${event.id}".execute().apply()
 
-  def updatePlanner(event: Event, planner: String)(implicit session: AutoSession): Boolean = sql"update table event set planner values $planner where id = $event.id".execute().apply()
+  def updatePlanner(event: Event, planner: String)(implicit session: AutoSession): Boolean = sql"update event set planner = ${planner} where id = ${event.id}".execute().apply()
 
-  def updateCandidateDates(newEvent: Event, oldEvent: Event): Boolean = {
+  def updateCandidateDates(newEvent: Event): Boolean = {
     val dates = newEvent.candidateDates.collect().map(date => DateFormatter.date2string(date)).mkString(",")
-    sql"update event table event set candidate_dates value $dates where id = $newEvent.id".execute().apply()
+    sql"update  event set candidate_dates = ${dates} where id = ${newEvent.id}".execute().apply()
     //vote table update
   }
   //イベントの削除をDBに反映
-  def deleteEvent(eventId: Int)(implicit session: AutoSession): Boolean = sql"delete from event where id = $eventId".execute().apply()
+  def deleteEvent(eventId: Int)(implicit session: AutoSession): Boolean = sql"delete from event where id = ${eventId}".execute().apply()
   //イベントの投票期間締め切り
-  def closeEvent(eventId: Int)(implicit session: AutoSession): Boolean = sql"update table event set status = false where id = $eventId".execute().apply()
+  def closeEvent(eventId: Int)(implicit session: AutoSession): Boolean = sql"update table event set status = false where id = ${eventId}".execute().apply()
 
   //投票に関するクエリを実行するメソッドたち
   //投票をDBに反映させる
   def insertVoting(eventId: Int, votingDate: LocalDateTime, vote: Vote)(implicit session: AutoSession): Boolean = {
     val date: String = DateFormatter.date2string(votingDate)
-    sql"insert into vote (id, participant_name, voting_date, voting_status) values ($eventId, $vote.name, $date, $vote.voting_status)".execute().apply()
+    sql"insert into vote (id, participant_name, voting_date, voting_status) values (${eventId}, ${vote.name}, ${date}, ${VotingValue.toInt(vote.votingStatus)})".execute().apply()
 
   }
 
@@ -119,12 +121,12 @@ object EventRepository {
   def updateVoting(eventId: Int, votingDate: LocalDateTime, vote: Vote)(implicit session: AutoSession): Boolean = {
     val date = DateFormatter.date2string(votingDate)
     val status = Util.VotingValue2Int(vote.votingStatus)
-    sql"update table event set voting_status = $status where id = $eventId and participant_name = $vote.name and voting_date = $date".execute().apply()
+    sql"update vote set voting_status = ${status} where id = ${eventId} and participant_name = ${vote.name} and voting_date = ${date}".execute().apply()
   }
 
   //投票内容の削除をDBに反映
   def deleteVoting(eventId: Int, votingDate: LocalDateTime, vote: Vote)(implicit session: AutoSession): Boolean = {
     val date = DateFormatter.date2string(votingDate)
-    sql"delete from event where id = $eventId and participant_name = $vote.name and voting_date = $date".execute().apply()
+    sql"delete from vote where id = ${eventId} and participant_name = ${vote.name} and voting_date = ${date}".execute().apply()
   }
 }

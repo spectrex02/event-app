@@ -71,7 +71,7 @@ class EventController @Inject() (cc: ControllerComponents) extends AbstractContr
     }
     val voting: Voting = votingOpt match {
       case Some(v) => v
-      case None => sys.error("Found unknown vlaue.")
+      case None => sys.error("Found unknown value.")
     }
 
     //苦肉の策
