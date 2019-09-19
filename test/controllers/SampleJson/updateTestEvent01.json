@@ -1,0 +1,34 @@
+{
+  "id": 2,
+  "eventName": "test event 2 updated!",
+  "candidateDates":[
+    {
+      "date": "2019-09-30T18:00:00",
+      "votes": [
+        {
+          "participant": "tom",
+          "status": 2
+        },
+        {
+          "participant": "bob",
+          "status": 2
+        }
+      ]
+    },
+    {
+      "date": "2019-09-28T20:00:00",
+      "vote": [
+        {
+          "participant": "tom",
+          "status":1
+        },
+        {
+          "participant": "bob",
+          "status": 0
+        }
+      ]
+    }
+  ],
+  "deadline": "2019-09-25T12:00:00",
+  "comment": "hogehoge"
+}

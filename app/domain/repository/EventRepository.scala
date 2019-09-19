@@ -17,7 +17,7 @@ object EventRepository {
   //一件取得
   def find(id: Int)(implicit session: DBSession): Option[Event]= {
     //候補日以外のイベントのフィールドを取得
-    val emptyEvent: Option[Event] = sql"select * from event where id = $id".map{
+    val emptyEvent: Option[Event] = sql"select * from event where id = ${id}".map{
       rs => Event(id = rs.get("id"),
                   eventName = rs.get("event_name"),
 //          candidateDates = rs.string("candidate_dates").split(",").toSeq.map(date => DateFormatter.string2date(date) -> Seq.empty[Vote]).toMap,
@@ -28,22 +28,18 @@ object EventRepository {
     }.single().apply()
 
     //rebuild vote
-    val votingSeq: List[(LocalDateTime, Vote)] = sql"select * from vote where event_id = $id".map{ rs =>
+    val votingSeq: List[(LocalDateTime, Vote)] = sql"select * from vote where id = ${id}".map{ rs =>
       (rs.localDateTime("voting_date"),Vote(rs.get("participant_name"), VotingValue.from(rs.int("voting_status"))))
     }.list().apply()
 
-    val votingMap: Map[LocalDateTime, List[Vote]] = votingSeq.groupBy { case (date: LocalDateTime, vote: Vote) =>
-      date
-    }.mapValues(_.map(_._2))
-
-    val actualcandidateDates: CandidateDates = votingSeq.groupBy { case (date: LocalDateTime, vote: Vote) => date }.mapValues(_.map(_._2)).map { case (date: LocalDateTime, votes: Seq[Vote]) =>
+    val actualCandidateDates: CandidateDates = votingSeq.groupBy { case (date: LocalDateTime, vote: Vote) => date }.mapValues(_.map(_._2)).map { case (date: LocalDateTime, votes: Seq[Vote]) =>
       CandidateDates(Seq(Candidate(date, votes)))
     }.head
 
 
     emptyEvent match {
 //      case Some(e) => if(v2 == Map.empty[LocalDateTime, Seq[Vote]]) Some(e) else Some(e.copy(candidateDates = v2))
-      case Some(e) =>if(actualcandidateDates == Seq.empty[Candidate]) Some(e) else Some(e.copy(candidateDates = actualcandidateDates))
+      case Some(e) =>if(actualCandidateDates == Seq.empty[Candidate]) Some(e) else Some(e.copy(candidateDates = actualCandidateDates))
       case None => None
     }
   }

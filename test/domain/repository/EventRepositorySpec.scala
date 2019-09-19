@@ -35,6 +35,16 @@ class EventRepositorySpec extends FlatSpec with Matchers {
     assert(!EventRepository.updateCandidateDates(updatedEvent))
   }
 
+  "find" should "return event" in {
+    val newEvent = Event(1, "insertEvent", CandidateDates(Seq(Candidate(DateFormatter.string2date("2019-08-12T10:00:00"), Seq.empty[Vote]))), DateFormatter.string2date("2019-08-07T17:00:00"), "insert event test")
+    val event : Event = newEvent.copy(candidateDates = CandidateDates(Seq(Candidate(DateFormatter.string2date("2019-09-11T00:00:00"), Seq.empty[Vote]))))
+    assert(event == EventRepository.find(1))
+  }
+  "findall" should "return event" in {
+    val a: Map[Int, String] =EventRepository.findAll()
+    assert(a == (1 -> "insertEvent"))
+  }
+
 
 //  "insertVoting" should "reflect db" in {
 //    assert(EventRepository.insertVoting(1, DateFormatter.string2date("2019-09-11T00:00:00"), Vote("name1", VotingValue.from(2))) == false)
