@@ -1,0 +1,37 @@
+{
+  "event": {
+              "id": 1,
+              "eventName": "example_event",
+              "candidateDates": [
+                {
+                  "date": "2019-08-30T19:00:00",
+                  "votes": [
+                    {
+                      "participant": "name1",
+                      "status": 1
+                    },
+                    {
+                      "participant": "name2",
+                      "status": 2
+                    }
+                  ]
+                },
+                {
+                  "date": "2019-09-01T19:00:00",
+                  "votes": [
+                    {
+                      "participant": "name1",
+                      "status": 1
+                    },
+                    {
+                      "participant": "name2",
+                      "status": 0
+                    }
+                  ]
+                }
+              ],
+              "deadline": "2019-08-29T00:00:00",
+              "comment": "example comment"
+            },
+  "planner": "planner1"
+}

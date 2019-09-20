@@ -22,4 +22,6 @@ libraryDependencies ++= Seq(
 
 libraryDependencies += "org.postgresql" % "postgresql" % "42.2.5"
 
-unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )  
+//unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )
+
+unmanagedResourceDirectories in Test += baseDirectory ( _ /"target/web/public/test" ).value
