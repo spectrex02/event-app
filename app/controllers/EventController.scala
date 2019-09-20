@@ -40,11 +40,15 @@ class EventController @Inject() (cc: ControllerComponents) extends AbstractContr
       case Some(v) => PlayJsonFormats.eventAndPlannerFromJson(v)
       case None => None
     }
-    optEvent match {
+    println(optEvent)
+    val result: Boolean = optEvent match {
       case Some(ep) => EventRepository.insertEvent(ep._1, ep._2)
-      case None => new Status(FORBIDDEN)
+      case None => true
     }
-    Ok
+    result match {
+      case true => new Status(FORBIDDEN)
+      case false => Ok("create new event.\n")
+    }
   }
 
   def updateEvent() = Action { implicit request: Request[AnyContent] =>
@@ -55,8 +59,8 @@ class EventController @Inject() (cc: ControllerComponents) extends AbstractContr
   def deleteEvent(id: Int) = Action { implicit request: Request[AnyContent] =>
     val queryResult: Boolean = EventRepository.deleteEvent(id)
     queryResult match {
-      case true => Ok("event deleted.")
-      case false => new Status(BAD_REQUEST)
+      case true => new Status(BAD_REQUEST)
+      case false => Ok("event deleted.\n")
     }
   }
 
@@ -82,11 +86,32 @@ class EventController @Inject() (cc: ControllerComponents) extends AbstractContr
     }
 
     resultSeq.forall(r => true) match {
-      case true => Ok
-      case false => new Status(BAD_REQUEST)
+      case true => new Status(BAD_REQUEST)
+      case false => Ok("create new vote.")
     }
   }
 
+
+  //delete
+  def deleteVote() = Action { implicit request: Request[AnyContent] =>
+    val deleteRequest: Option[Voting] = request.body.asJson match {
+      case Some(value) => PlayJsonFormats.votingFromJson(value)
+      case None => None
+    }
+    val result: Boolean = deleteRequest match {
+      case Some(v) => EventRepository.deleteVoting(v)
+      case None => true
+    }
+    result match {
+      case true => new Status(BAD_REQUEST)
+      case false => Ok("deleted voting.")
+    }
+  }
+
+  def result(id: Int) = Action { implicit request: Request[AnyContent] =>
+
+    Ok
+  }
 //  def updateEvent() = Action { implicit request: Request[AnyContent] =>
 //    update event
 //  }

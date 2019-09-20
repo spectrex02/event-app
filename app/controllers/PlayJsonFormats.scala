@@ -94,18 +94,6 @@ object PlayJsonFormats {
 
   implicit val candidateDatesWrites: Writes[CandidateDates] = (c: CandidateDates) =>
     Json.toJson(c.candidates)
-  //    Json.toJson(c.asInstanceOf[Seq[Candidate]])
-  //  val a: CandidateDates => Seq[Candidate] = (c: CandidateDates) => c.candidate
-
-  //  implicit val candidateDateWrites: Writes[CandidateDate] = (o: CandidateDate) =>
-  //    Json.obj(
-  //      "date" -> DateFormatter.date2string(o.date),
-  //      "votes" -> o.votes
-  //    )
-
-  //ここはパスあとで
-  //  implicit val candidateDatesWrites: Writes[Map[LocalDateTime, Seq[Vote]]] = (o: Map[LocalDateTime, Seq[Vote]]) =>
-  //    Json.toJson(o.map(v => CandidateDate(v._1, v._2)))
 
   implicit val eventWrites: Writes[Event] = (
     (__ \ "id").write[Int] and
@@ -115,10 +103,15 @@ object PlayJsonFormats {
       (__ \ "comment").write[String]
     )(unlift(Event.unapply))
 
-  implicit val eventAndPlannerWrites : Writes[(Event, String)] = (
+  implicit val eventAndPlannerWrites: Writes[(Event, String)] = (
     (__ \ "event").write[Event] and
       (__ \ "planner").write[String]
     ).tupled
+
+  implicit val eventAndPlannerReads: Reads[(Event, String)] = (
+    (__ \ "event").read[Event] and
+      (__ \ "planner").read[String]
+  ).tupled
 
 
   def eventFromJson(value: JsValue): Option[Event] = {

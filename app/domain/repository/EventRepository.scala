@@ -57,9 +57,8 @@ object EventRepository {
 //    val dates: Array[Timestamp] = event.candidateDates.keys.map(date => Timestamp.valueOf(date)).toArray
 //    val dates: String = event.candidateDates.keys.map(date => DateFormatter.date2string(date)).mkString(",")
     val dates: String = event.candidateDates.collect().map(date => DateFormatter.date2string(date)).mkString(",")
-    println(dates)
     val dl: String = DateFormatter.date2string(event.deadline)
-    println(dl)
+
     sql"insert into event (event_name, candidate_dates, deadline, comment, planner) values (${event.eventName}, ${dates}, ${dl}, ${event.comment}, ${plannerName})".execute().apply()
   }
 
@@ -103,7 +102,14 @@ object EventRepository {
     //vote table update
   }
   //イベントの削除をDBに反映
-  def deleteEvent(eventId: Int)(implicit session: AutoSession): Boolean = sql"delete from event where id = ${eventId}".execute().apply()
+  def deleteEvent(eventId: Int)(implicit session: AutoSession): Boolean = {
+    val eventResult = sql"delete from event where id = ${eventId}".execute().apply()
+    val voteResult = sql"delete from vote where id = ${eventId}".execute().apply()
+    Seq(eventResult, voteResult).find(r => true) match {
+      case Some(r) => true
+      case None => false
+    }
+  }
   //イベントの投票期間締め切り
   def closeEvent(eventId: Int)(implicit session: AutoSession): Boolean = sql"update event set status = false where id = ${eventId}".execute().apply()
   def openEvent(eventId: Int)(implicit session: AutoSession): Boolean = sql"update event set status = true where id = ${eventId}".execute().apply()
@@ -124,8 +130,12 @@ object EventRepository {
   }
 
   //投票内容の削除をDBに反映
-  def deleteVoting(eventId: Int, votingDate: LocalDateTime, vote: Vote)(implicit session: AutoSession): Boolean = {
-    val date = DateFormatter.date2string(votingDate)
-    sql"delete from vote where id = ${eventId} and participant_name = ${vote.name} and voting_date = ${date}".execute().apply()
+  def deleteVoting(voting: Voting)(implicit session: AutoSession): Boolean = {
+    val date: Seq[String] = voting.votes.map { p => DateFormatter.date2string(p.date)}
+    val result: Option[Boolean] = date.map { d: String => sql"delete from vote where id = ${voting.id} and participant_name = ${voting.participant} and voting_date = ${d}".execute().apply() }.find(r => true)
+    result match {
+      case Some(r) => true
+      case None => false
+    }
   }
 }

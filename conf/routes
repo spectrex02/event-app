@@ -16,3 +16,6 @@ POST     /event/update               controllers.EventController.updateEvent()
 GET      /event/delete/:id               controllers.EventController.deleteEvent(id: Int)
 
 POST    /event/vote                 controllers.EventController.createVote()
+POST    /event/deletevote           controllers.EventController.deleteVote()
+
+GET     /event/result/:id           controllers.EventController.result(id: Int)
