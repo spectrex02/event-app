@@ -19,7 +19,7 @@ class EventController @Inject() (cc: ControllerComponents) extends AbstractContr
   implicit val session = AutoSession
 
   //get one event
-  def  get(id : Int) = Action { implicit request: Request[AnyContent] =>
+  def get(id: Int) = Action { implicit request: Request[AnyContent] =>
     //get data from database and generate an event class instance
     val event: Option[Event] = EventRepository.find(id)
 
@@ -128,8 +128,8 @@ class EventController @Inject() (cc: ControllerComponents) extends AbstractContr
 
   def createVote() = Action { implicit request: Request[AnyContent] =>
     //def insertVoting(eventId: Int, votingDate: LocalDateTime, vote: Vote)
-//    case class ParticipateStatus(date: LocalDateTime, status: VotingValue)
-//    case class Voting(id: Int, participant: String, votes: Seq[ParticipateStatus])
+    //    case class ParticipateStatus(date: LocalDateTime, status: VotingValue)
+    //    case class Voting(id: Int, participant: String, votes: Seq[ParticipateStatus])
     //pay attention to difference between insertVoting and votingFromJson
     val votingOpt: Option[Voting] = request.body.asJson match {
       case Some(v) => PlayJsonFormats.votingFromJson(v)
@@ -144,7 +144,6 @@ class EventController @Inject() (cc: ControllerComponents) extends AbstractContr
       case false => Ok("insert voting")
     }
   }
-
 
 
   //delete
@@ -177,4 +176,5 @@ class EventController @Inject() (cc: ControllerComponents) extends AbstractContr
       case false => Ok("updated vote.")
     }
   }
+}
 

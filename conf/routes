@@ -16,6 +16,7 @@ POST     /event/updatename               controllers.EventController.updateEvent
 POST     /event/updatecomment       controllers.EventController.updateComment()
 POST    /event/updatedeadline       controllers.EventController.updateDeadLine()
 POST    /event/updatecandidatedates controllers.EventController.updateCandidateDates()
+
 GET      /event/delete/:id               controllers.EventController.deleteEvent(id: Int)
 
 POST    /event/vote                 controllers.EventController.createVote()

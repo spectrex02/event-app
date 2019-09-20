@@ -215,9 +215,9 @@ object PlayJsonFormats {
       (__ \ "result").write[Int]
     )(unlift(VotingResult.unapply))
 
-  implicit val eventNameReads: Reads[(Int, String)] = (
+  implicit val eventNameAndCommentReads: Reads[(Int, String)] = (
     (__ \ "id").read[Int] and
-      (__ \ "eventName").read[String]
+      (__ \ "change").read[String]
   )tupled
 
   implicit val eventCandidateDatesReads: Reads[(Int, CandidateDates)] = (
@@ -230,17 +230,12 @@ object PlayJsonFormats {
       (__ \ "deadline").read[LocalDateTime]
   )tupled
 
-  implicit val eventCommentReads: Reads[(Int, String)] = (
-    (__ \ "id").read[Int] and
-      (__ \ "comment").read[String]
-  )tupled
 
 
-  def eventNameFromJson(value: JsValue): Option[(Int, String)] = {
-    value.validate[(Int, String)] match {
-      case v: JsSuccess[(Int, String)] => v.asOpt
-      case e: JsError => None
-    }
+
+  def eventNameFromJson(value: JsValue): Option[(Int, String)] = value.validate[(Int, String)] match {
+    case v: JsSuccess[(Int, String)] => v.asOpt
+    case e: JsError => None
   }
 
   def eventCandidateDatesFromJson(value: JsValue): Option[(Int, CandidateDates)] = {
