@@ -51,9 +51,64 @@ class EventController @Inject() (cc: ControllerComponents) extends AbstractContr
     }
   }
 
-  def updateEvent() = Action { implicit request: Request[AnyContent] =>
+  def updateEventName() = Action { implicit request: Request[AnyContent] =>
+    val updateRequest: Option[(Int, String)] = request.body.asJson match {
+      case Some(value) => PlayJsonFormats.eventNameFromJson(value)
+      case None => None
+    }
+    val result = updateRequest match {
+      case Some(value) => EventRepository.updateEventName(value._1, value._2)
+      case None => true
+    }
+    result match {
+      case true => new Status(INTERNAL_SERVER_ERROR)
+      case false => Ok("updated event name.")
+    }
+  }
 
-    Ok
+  def updateComment() = Action { implicit request: Request[AnyContent] =>
+    val updateRequest: Option[(Int, String)] = request.body.asJson match {
+      case Some(value) => PlayJsonFormats.eventCommentFromJson(value)
+      case None => None
+    }
+    val result = updateRequest match {
+      case Some(value) => EventRepository.updateComment(value._1, value._2)
+      case None => true
+    }
+    result match {
+      case true => new Status(INTERNAL_SERVER_ERROR)
+      case false => Ok("updated event comment.")
+    }
+  }
+
+  def updateDeadLine() = Action { implicit request: Request[AnyContent] =>
+    val updateRequest: Option[(Int, LocalDateTime)] = request.body.asJson match {
+      case Some(value) => PlayJsonFormats.eventDeadLineFromJson(value)
+      case None => None
+    }
+    val result = updateRequest match {
+      case Some(value) => EventRepository.updateDeadline(value._1, value._2)
+      case None => true
+    }
+    result match {
+      case true => new Status(INTERNAL_SERVER_ERROR)
+      case false => Ok("updated event deadline.")
+    }
+  }
+
+  def updateCandidateDates() = Action { implicit request: Request[AnyContent] =>
+    val updateRequest: Option[(Int, CandidateDates)] = request.body.asJson match {
+      case Some(value) => PlayJsonFormats.eventCandidateDatesFromJson(value)
+      case None => None
+    }
+    val result = updateRequest match {
+      case Some(value) => EventRepository.updateCandidateDates(value._1, value._2)
+      case None => true
+    }
+    result match {
+      case true => new Status(INTERNAL_SERVER_ERROR)
+      case false => Ok("updated candidate dates.")
+    }
   }
 
   def deleteEvent(id: Int) = Action { implicit request: Request[AnyContent] =>
@@ -61,6 +116,13 @@ class EventController @Inject() (cc: ControllerComponents) extends AbstractContr
     queryResult match {
       case true => new Status(BAD_REQUEST)
       case false => Ok("event deleted.\n")
+    }
+  }
+
+  def closeEvent(id: Int) = Action { implicit request: Request[AnyContent] =>
+    EventRepository.closeEvent(id) match {
+      case true => new Status(INTERNAL_SERVER_ERROR)
+      case false => Ok("close this event.")
     }
   }
 
@@ -73,23 +135,16 @@ class EventController @Inject() (cc: ControllerComponents) extends AbstractContr
       case Some(v) => PlayJsonFormats.votingFromJson(v)
       case None => None
     }
-    val voting: Voting = votingOpt match {
-      case Some(v) => v
-      case None => sys.error("Found unknown value.")
+    val voting: Boolean = votingOpt match {
+      case Some(v) => EventRepository.insertVoting(v)
+      case None => true
     }
-
-    //苦肉の策
-    val eventId: Int = voting.id
-    val participantName: String = voting.participant
-    val resultSeq: Seq[Boolean] = voting.votes.map { dateAndStatus =>
-      EventRepository.insertVoting(eventId, dateAndStatus.date, Vote(participantName, dateAndStatus.status))
-    }
-
-    resultSeq.forall(r => true) match {
+    voting match {
       case true => new Status(BAD_REQUEST)
-      case false => Ok("create new vote.")
+      case false => Ok("insert voting")
     }
   }
+
 
 
   //delete
@@ -108,12 +163,18 @@ class EventController @Inject() (cc: ControllerComponents) extends AbstractContr
     }
   }
 
-  def result(id: Int) = Action { implicit request: Request[AnyContent] =>
-
-    Ok
+  def updateVote() = Action { implicit request: Request[AnyContent] =>
+    val updateRequest: Option[Voting] = request.body.asJson match {
+      case Some(value) => PlayJsonFormats.votingFromJson(value)
+      case None => None
+    }
+    val result = updateRequest match {
+      case Some(value) => EventRepository.updateVoting(value)
+      case None => true
+    }
+    result match {
+      case true => new Status(BAD_REQUEST)
+      case false => Ok("updated vote.")
+    }
   }
-//  def updateEvent() = Action { implicit request: Request[AnyContent] =>
-//    update event
-//  }
-}
 

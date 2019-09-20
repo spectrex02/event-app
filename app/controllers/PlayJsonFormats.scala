@@ -215,6 +215,53 @@ object PlayJsonFormats {
       (__ \ "result").write[Int]
     )(unlift(VotingResult.unapply))
 
+  implicit val eventNameReads: Reads[(Int, String)] = (
+    (__ \ "id").read[Int] and
+      (__ \ "eventName").read[String]
+  )tupled
 
+  implicit val eventCandidateDatesReads: Reads[(Int, CandidateDates)] = (
+    (__ \ "id").read[Int] and
+      (__ \ "candidateDates").read[CandidateDates]
+  )tupled
+
+  implicit val eventDeadLineReads: Reads[(Int, LocalDateTime)] = (
+    (__ \ "id").read[Int] and
+      (__ \ "deadline").read[LocalDateTime]
+  )tupled
+
+  implicit val eventCommentReads: Reads[(Int, String)] = (
+    (__ \ "id").read[Int] and
+      (__ \ "comment").read[String]
+  )tupled
+
+
+  def eventNameFromJson(value: JsValue): Option[(Int, String)] = {
+    value.validate[(Int, String)] match {
+      case v: JsSuccess[(Int, String)] => v.asOpt
+      case e: JsError => None
+    }
+  }
+
+  def eventCandidateDatesFromJson(value: JsValue): Option[(Int, CandidateDates)] = {
+    value.validate[(Int, CandidateDates)] match {
+      case v: JsSuccess[(Int, CandidateDates)] => v.asOpt
+      case e: JsError => None
+    }
+  }
+
+  def eventDeadLineFromJson(value: JsValue): Option[(Int, LocalDateTime)] = {
+    value.validate[(Int, LocalDateTime)] match {
+      case v: JsSuccess[(Int, LocalDateTime)] => v.asOpt
+      case e: JsError => None
+    }
+  }
+
+  def eventCommentFromJson(value: JsValue): Option[(Int, String)] = {
+    value.validate[(Int, String)] match {
+      case v: JsSuccess[(Int, String)] => v.asOpt
+      case e: JsError => None
+    }
+  }
 
 }
