@@ -15,17 +15,24 @@ case class Vote(name:  String, votingStatus: VotingValue) {
 
 
 //参加可否のステータス
-sealed abstract class VotingValue(value:  Int) {
-}
+sealed abstract class VotingValue(value: Int)
 
 object VotingValue {
-  object Maru extends VotingValue(value = 2) {
-    val value: Int = 2
+  case object Maru extends VotingValue(value = 2)
+  case object Batu extends VotingValue(value = 0)
+  case object Sankaku extends VotingValue(value = 1)
+
+  def from(value: Int):VotingValue = value match {
+    case 2 => VotingValue.Maru
+    case 0 => VotingValue.Batu
+    case 1 => VotingValue.Sankaku
+    case _ => sys.error(s"Unknown value: $value")
   }
-  object Batu extends VotingValue(value = 0) {
-    val value: Int = 0
-  }
-  object Sankaku extends VotingValue(value = 1) {
-    val value: Int = 1
-  }
+
+  def toInt(value: VotingValue): Int =
+    value match {
+      case VotingValue.Maru => 2
+      case VotingValue.Batu => 0
+      case VotingValue.Sankaku => 1
+    }
 }

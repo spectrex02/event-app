@@ -1,0 +1,10 @@
+{
+  "id": 6,
+  "participant": "participant1",
+  "votes": [
+    {
+      "date": "2019-08-30T19:00:00",
+      "status": 2
+    }
+  ]
+}

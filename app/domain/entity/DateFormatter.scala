@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 
 object DateFormatter {
 
-  private val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+  private val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:mm")
   //メソッド
 
   //あとで切り分け
