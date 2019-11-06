@@ -32,9 +32,6 @@ object EventRepository {
     val v2: Map[LocalDateTime, List[Vote]] = vv.groupBy{ case (date: LocalDateTime, vote: Vote) =>
       date
     }.mapValues(_.map(_._2))
-
-
-
     tmp match {
       case Some(e) => if(v2 == Map.empty[LocalDateTime, Seq[Vote]]) Some(e) else Some(e.copy(candidateDates = v2))
       case None => None
